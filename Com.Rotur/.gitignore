@@ -1,0 +1,15 @@
+# Ignore IDE files
+.settings/
+.project
+.classpath
+.vscode/
+.metadata/
+
+# Ignore Build folders
+bin/
+target/
+
+# Ignore local reports and screenshots
+reports/*.html
+reports/*.png
+test-output/
