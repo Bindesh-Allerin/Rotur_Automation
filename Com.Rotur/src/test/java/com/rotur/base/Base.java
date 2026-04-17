@@ -13,6 +13,7 @@ import org.testng.annotations.*;
 
 import com.aventstack.extentreports.*;
 import com.utils.ConfigReader;
+import com.utils.EmailUtil;
 import com.utils.ExtentManager;
 import com.utils.ExtentTestManager;
 import com.utils.Retry;
@@ -107,6 +108,9 @@ public class Base {
 		if (Desktop.isDesktopSupported()) {
 			Desktop.getDesktop().browse(reportFile.toURI());
 		}
+		
+		//Call Email Reporting
+		EmailUtil.sendReport();
 
 	}
 }

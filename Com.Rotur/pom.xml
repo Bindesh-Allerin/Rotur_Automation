@@ -1,9 +1,10 @@
 <project xmlns="https://apache.org"
 	xmlns:xsi="http://w3.org"
-	xsi:schemaLocation="https://apache.org https://apache.org">  <modelVersion>4.0.0</modelVersion>
-  <groupId>Com.Rotur</groupId>
-  <artifactId>Com.Rotur</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+	xsi:schemaLocation="https://apache.org https://apache.org">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>Com.Rotur</groupId>
+	<artifactId>Com.Rotur</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<!-- Core Selenium Library -->
 		<dependency>
@@ -37,6 +38,12 @@
 			<groupId>com.aventstack</groupId>
 			<artifactId>extentreports</artifactId>
 			<version>5.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
 		</dependency>
 
 
