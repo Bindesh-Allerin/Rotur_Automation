@@ -39,14 +39,12 @@ public class LoginData {
 
 	@Override
 	public String toString() {
-		return """
-				{
-				    [%s],
-				    "email": "%s",
-				    "password": "%s"
-				}
-				""".formatted(type, email, password);
-
+	    return "{\n" +
+	           "    [" + type + "],\n" +
+	           "    \"email\": \"" + email + "\",\n" +
+	           "    \"password\": \"" + password + "\"\n" +
+	           "}";
 	}
+
 
 }
