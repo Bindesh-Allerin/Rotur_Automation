@@ -23,6 +23,7 @@ public class ExtentManager {
             
             // 1. Dynamic path for history
             reportPath = baseDir + "ExtentReport_" + timestamp + ".html";
+            System.out.println("Report Path:" + reportPath);
             // 2. Fixed path for Jenkins
             String latestReport = baseDir + "ExtentReport.html";
 
