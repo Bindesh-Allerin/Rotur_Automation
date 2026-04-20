@@ -1,0 +1,10 @@
+<suite name="Rotur Test Automation Suite">
+	<test name="Login Module Tests">
+		<classes>
+			<class name="com.rotur.test.RoturLogin" />
+		</classes>
+	</test>
+
+	<test name="Plan Module Test"></test>
+
+</suite>

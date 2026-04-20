@@ -16,6 +16,11 @@ public class ExtentManager {
             String baseDir = System.getProperty("user.dir") + "/test-output/reports/";
             String timestamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(new Date());
             
+            java.io.File directory = new java.io.File(baseDir);
+            if (!directory.exists()) {
+                directory.mkdirs(); // This creates 'test-output' and 'reports' if they are missing
+            }
+            
             // 1. Dynamic path for history
             reportPath = baseDir + "ExtentReport_" + timestamp + ".html";
             // 2. Fixed path for Jenkins
@@ -33,6 +38,7 @@ public class ExtentManager {
             extent.attachReporter(dynamicSpark, jenkinsSpark);
             
             // System Info (Applied to the 'extent' object, so it goes to both reporters)
+            extent.setSystemInfo("Suite", "Rotur Automation Test - Login");
             extent.setSystemInfo("Project", "Rotur - Release Management");
             extent.setSystemInfo("OS", System.getProperty("os.name"));
             extent.setSystemInfo("Java Version", System.getProperty("java.version"));
