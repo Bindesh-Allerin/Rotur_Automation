@@ -100,6 +100,7 @@ public class Base {
 	// Flush Report (END)
 	@AfterSuite
 	public void flushReport() throws IOException {
+		
 		extent.flush();
 		// Create a File object using the dynamic path saved earlier
 		File reportFile = new File(ExtentManager.reportPath);
