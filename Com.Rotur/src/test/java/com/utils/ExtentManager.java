@@ -13,7 +13,9 @@ public class ExtentManager {
 
     public static ExtentReports getInstance() {
         if (extent == null) {
-            String baseDir = System.getProperty("user.dir") + "/test-output/reports/";
+            //String baseDir = System.getProperty("user.dir") + "/test-output/reports/";
+            String baseDir = "test-output/reports/";
+
             String timestamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(new Date());
             
             java.io.File directory = new java.io.File(baseDir);
@@ -24,8 +26,10 @@ public class ExtentManager {
             // 1. Dynamic path for history
             reportPath = baseDir + "ExtentReport_" + timestamp + ".html";
             System.out.println("Report Path:" + reportPath);
+            
             // 2. Fixed path for Jenkins
             String latestReport = baseDir + "ExtentReport.html";
+            System.out.println("Report Path:" + latestReport);
 
             ExtentSparkReporter dynamicSpark = new ExtentSparkReporter(reportPath);
             ExtentSparkReporter jenkinsSpark = new ExtentSparkReporter(latestReport);
