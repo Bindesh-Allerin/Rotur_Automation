@@ -13,9 +13,9 @@ pipeline {
             steps {
             script{
             if(isUnix()){
-                sh 'mvn clean test'
+                sh 'mvn -f Com.Rotur/pom.xml clean test'
             }else{
-                bat 'mvn clean test'
+                bat 'mvn -f Com.Rotur/pom.xml clean test'
             }}}
         }
 
