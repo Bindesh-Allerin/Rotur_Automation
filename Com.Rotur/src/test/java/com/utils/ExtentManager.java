@@ -13,8 +13,8 @@ public class ExtentManager {
 
     public static ExtentReports getInstance() {
         if (extent == null) {
-            //String baseDir = System.getProperty("user.dir") + "/test-output/reports/";
-            String baseDir = "test-output/reports/";
+            String baseDir = System.getProperty("user.dir") + "/test-output/reports/";
+//            String baseDir = "test-output/reports/";
 
             String timestamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss").format(new Date());
             

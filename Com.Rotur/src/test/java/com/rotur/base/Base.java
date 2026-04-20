@@ -1,4 +1,3 @@
-
 package com.rotur.base;
 
 import java.awt.Desktop;
@@ -22,96 +21,126 @@ import com.utils.VisualAIUtil;
 
 public class Base {
 
-	public WebDriver driver;
 	protected static ExtentReports extent;
 
-	// Report Setup (ONCE)
 	@BeforeSuite
 	public void setupReport() {
 		extent = ExtentManager.getInstance();
 	}
 
-	// Browser + Test Setup
+	@Parameters("browser")
 	@BeforeMethod
-	public void setup(Method method) {
+	public void setup(Method method, @Optional("chrome") String browserXML) {
 
 		String description = method.getAnnotation(Test.class).description();
 
-		String browser = ConfigReader.getProperty("browser");
-		driver = BrowserFactory.getDriver(browser);
+		// Priority: Uses XML parameter if available, else falls back to Config
+		String browser = (browserXML != null) ? browserXML : ConfigReader.getProperty("browser");
+
+		// Initialize the driver via the Factory (ThreadLocal)
+		WebDriver driver = BrowserFactory.getDriver(browser);
 
 		driver.manage().window().maximize();
+
+		System.out.println("Execution starting on Thread ID: " + Thread.currentThread().threadId());
 
 		int time = Integer.parseInt(ConfigReader.getProperty("timeout"));
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(time));
 
 		driver.get(ConfigReader.getProperty("url"));
 
-		System.out.println("Browser Launched");
-
 		// Extent Test Creation
-		ExtentTest test = extent.createTest(method.getName(), description);
-		test.assignCategory(method.getName() + "UI Tests");
+		ExtentTest test = extent.createTest(method.getName() + " [" + browser + "]", description);
+		test.assignCategory("UI Tests");
 		ExtentTestManager.setTest(test);
-		ExtentTestManager.getTest().info("Test Started");
+		ExtentTestManager.getTest().info("Test Started on browser: " + browser);
 	}
 
-	// Tear Down + Reporting
 	@AfterMethod
 	public void tearDown(ITestResult result) {
-
+		// Get the driver instance for the current thread
+		WebDriver driver = BrowserFactory.getDriver();
 		ExtentTest test = ExtentTestManager.getTest();
 
-		try {
-			VisualAIUtil.validate(driver, result.getName());
-			test.pass("Visual Validation Passed");
-		} catch (Exception e) {
-			test.warning("Visual Mismatch Detected");
-		}
-
+		// 1. Check Selenium Test Status First
 		if (result.getStatus() == ITestResult.FAILURE) {
-
-			if (result.getMethod().getCurrentInvocationCount() <= Retry.maxRetry) {
-				ExtentTestManager.getTest().warning("Retrying Exceution....");
-			} else {
-				test.fail(result.getThrowable());
-			}
-
-			// Screenshot
-			String path = ScreenshotUtil.capture(driver, result.getName());
+			handleFailure(result, test, driver);
+		} else if (result.getStatus() == ITestResult.SUCCESS) {
+			// 2. Only perform Visual AI if the functional test passed
 			try {
-				test.addScreenCaptureFromPath(path);
+				VisualAIUtil.validate(driver, result.getName());
+				test.pass("Functional & Visual Validation Passed");
 			} catch (Exception e) {
-				e.printStackTrace();
+				test.fail("Visual Mismatch Detected: " + e.getMessage());
+				result.setStatus(ITestResult.FAILURE); // Force TestNG to mark it failed
 			}
-		}
-
-		else if (result.getStatus() == ITestResult.SUCCESS) {
-			test.pass("Test Passed");
-		}
-
-		else if (result.getStatus() == ITestResult.SKIP) {
+		} else if (result.getStatus() == ITestResult.SKIP) {
 			test.skip("Test Skipped");
 		}
 
-		driver.quit();
+		BrowserFactory.quitDriver();
+		ExtentTestManager.unload();
 	}
 
-	// Flush Report (END)
+	private void handleFailure(ITestResult result, ExtentTest test, WebDriver driver) {
+		if (result.getMethod().getCurrentInvocationCount() <= Retry.maxRetry) {
+			test.warning("Test failed. Retrying Execution...");
+		} else {
+			test.fail(result.getThrowable());
+		}
+
+		String path = ScreenshotUtil.capture(driver, result.getName());
+		try {
+			test.addScreenCaptureFromPath(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+//	try
+//
+//	{
+//		VisualAIUtil.validate(driver, result.getName());
+//		test.pass("Visual Validation Passed");
+//	}catch(
+//	Exception e)
+//	{
+//		test.warning("Visual Mismatch Detected");
+//	}
+//
+//	if(result.getStatus()==ITestResult.FAILURE)
+//	{
+//		if (result.getMethod().getCurrentInvocationCount() <= Retry.maxRetry) {
+//			test.warning("Retrying Execution....");
+//		} else {
+//			test.fail(result.getThrowable());
+//		}
+//
+//		// Capture Screenshot using the thread-specific driver
+//		String path = ScreenshotUtil.capture(driver, result.getName());
+//		try {
+//			test.addScreenCaptureFromPath(path);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}else if(result.getStatus()==ITestResult.SUCCESS)
+//	{
+//		test.pass("Test Passed");
+//	}
+
+	// Quit and cleanup the ThreadLocal reference
+//	BrowserFactory.quitDriver();
+//	}
+
 	@AfterSuite
 	public void flushReport() throws IOException {
-		
 		extent.flush();
-		// Create a File object using the dynamic path saved earlier
 		File reportFile = new File(ExtentManager.reportPath);
 
-		// Automatically open the EXACT report just generated
-		if (Desktop.isDesktopSupported()) {
+		if (Desktop.isDesktopSupported() && reportFile.exists()) {
 			Desktop.getDesktop().browse(reportFile.toURI());
 		}
-		
-		//Call Email Reporting
-		EmailUtil.sendReport();
 
+		EmailUtil.sendReport();
 	}
 }

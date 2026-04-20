@@ -19,7 +19,7 @@ public class BasePage {
         return wait.WaitForVisibility(locator);
     }
 
-    protected void type(By locator, String text) {
+    protected void enter(By locator, String text) {
         WebElement element = find(locator);
         element.clear();
         element.sendKeys(text);

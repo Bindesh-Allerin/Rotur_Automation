@@ -22,8 +22,8 @@ public class LoginPage extends BasePage {
 
     // ACTIONS
     public void login(String user, String pass) {
-        type(username, user);
-        type(password, pass);
+        enter(username, user);
+        enter(password, pass);
         click(loginbtn);
     }
 

@@ -1,10 +1,12 @@
-<suite name="Rotur Test Automation Suite">
-	<test name="Login Module Tests">
-		<classes>
-			<class name="com.rotur.test.RoturLogin" />
-		</classes>
-	</test>
-
-	<test name="Plan Module Test"></test>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Use data-provider-thread-count to specify how many of your 10 cases run at once -->
+<suite name="Rotur Test Automation Suite" parallel="methods" data-provider-thread-count="10">
+    <test name="Login Module Tests">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="com.rotur.test.RoturLogin"/>
+        </classes>
+    </test>
+    	<test name="Plan Module Test"></test>
 
 </suite>
